@@ -3,15 +3,25 @@ version: '3'
 volumes:
   pg_data:
   static:
+  media:
 
 services:
   db:
     image: postgres:13
+    # Файл (или список файлов) с переменными окружения
+    env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
     build: ./backend/
     env_file: .env
+    # Тут подключаем volume к backend
+    volumes:
+      - static:/backend_static
+      - media:/media
+    # Какие контейнеры нужно запустить до старта этого контейнера:
+    depends_on:
+      - db
   frontend:
     env_file: .env
     build: ./frontend/
@@ -22,6 +32,9 @@ services:
     build: ./nginx/
     env_file: .env
     ports:
-      - 9000:80
+      - 8080:80
     volumes:
       - static:/static
+      - media:/media
+    depends_on:
+      - backend
