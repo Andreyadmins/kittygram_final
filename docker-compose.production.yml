@@ -3,8 +3,8 @@ version: '3'
 
 volumes:
   pg_data_production:
-  static:
-  media:
+  static_volume:
+  media_volume:
 
 # Всё отличие – заменяем build на image и указываем, какой образ использовать
 services:
@@ -17,23 +17,19 @@ services:
     image: andreyspb/kittygram_backend
     env_file: .env
     volumes:
-      - static:/backend_static
-    # Какие контейнеры нужно запустить до старта этого контейнера:
-    depends_on:
-      - db
+      - static_volume:/backend_static
+      - media_volume:/media
   frontend:
     image: andreyspb/kittygram_frontend  # Качаем с DockerHub
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static:/frontend_static
+      - static_volume:/frontend_static
   gateway:
     image: andreyspb/kittygram_gateway  # Качаем с DockerHub
     env_file: .env
     volumes:
-      - static:/staticfiles/
-      - media:/media
+      - static_volume:/static/
+      - media_volume:/media/
     ports:
       - 8080:80
-    depends_on:
-      - backend
