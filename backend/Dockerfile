@@ -2,6 +2,10 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+# переменные окружения
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 RUN pip install gunicorn==20.1.0
 
 COPY requirements.txt ./
